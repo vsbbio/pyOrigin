@@ -123,8 +123,6 @@ class Matplotin:
             legend=False,
             ax=self.ax)    
         
-        plt.title(f"{self.subclasse}_{self.chart_name}", loc='center', y=1.077)    
-        
         if self.x_invert:
             self.ax.invert_xaxis()
         
@@ -134,13 +132,14 @@ class Matplotin:
         self.ax.tick_params(labelleft=self.y_label_axis, left=self.y_label)
         self.ax.legend(gby.indices.keys(),
                        loc='upper left',
-                       bbox_to_anchor=(-0.01, 1.07),
+                       bbox_to_anchor=(-0.01, 1.08),
                        ncol=len(gby.indices.keys()),
                        fancybox=True,
-                       framealpha=0.1)   
+                       framealpha=0.0)
         
     def __save__(self):
-        self.fig.savefig(f"{self.save_path}\\{self.subclasse}_{self.chart_name}.png")
+        self.fig.tight_layout()
+        self.fig.savefig(f"{self.save_path}\\{self.subclasse}_{self.chart_name}.png", dpi=300)
         self.df.to_excel(f"{self.main_path}\\{self.subclasse}_{self.chart_name}.xlsx", index=True)
         plt.close()
-        print(f"\n>> Análise: {self.subclasse} | Gráfico: {self.chart_name} - OK")
+        print(f">> Análise: {self.subclasse} | Gráfico: {self.chart_name} - OK")
