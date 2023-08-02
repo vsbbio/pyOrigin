@@ -123,7 +123,7 @@ class Matplotin:
             legend=False,
             ax=self.ax)    
         
-        plt.title(f"{self.subclasse}_{self.chart_name}", loc='center', y=1.08)    
+        plt.title(f"{self.subclasse}_{self.chart_name}", loc='center', y=1.077)    
         
         if self.x_invert:
             self.ax.invert_xaxis()
@@ -132,8 +132,12 @@ class Matplotin:
             self.ax.invert_yaxis()        
         
         self.ax.tick_params(labelleft=self.y_label_axis, left=self.y_label)
-        self.ax.legend(gby.indices.keys(),loc='upper left', bbox_to_anchor=(-0.01, 1.06),
-                  ncol=len(gby.indices.keys()))   
+        self.ax.legend(gby.indices.keys(),
+                       loc='upper left',
+                       bbox_to_anchor=(-0.01, 1.07),
+                       ncol=len(gby.indices.keys()),
+                       fancybox=True,
+                       framealpha=0.1)   
         
     def __save__(self):
         self.fig.savefig(f"{self.save_path}\\{self.subclasse}_{self.chart_name}.png")
