@@ -1,13 +1,32 @@
 # -*- coding: utf-8 -*-
 
-import matplotlib.pyplot as plt
 from matplotlib import rcParams, cycler
 from configparser import ConfigParser
-import glob
+from glob import glob
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import PySimpleGUI as sg
+
+print = sg.cprint
 
 config = ConfigParser()
+
+def plot(args):
+    master_path = args["master_path"]
+    version = args["version"]
+    master_folders = glob(rf"{master_path}\*")
+    for mf in master_folders:
+        subclasse = mf.split("\\")[-1].upper()
+        if args.get(subclasse, False):
+            print(f"\nCONFIGURAÇÃO: {subclasse.upper()}")
+            folders = glob(fr"{mf}\*")            
+            for folder in folders:
+                chart_name = folder.split("\\")[-1]
+                plot = Matplotin()
+                plot.run(master_path, folder, subclasse, chart_name, version)
+    print("PROGRAMA FINALIZADO")
+        
 
 class Matplotin:
     def __init__(self, style=r"penplot\style.ini"):
@@ -22,10 +41,11 @@ class Matplotin:
         rcParams["axes.prop_cycle"] = cycler("color", self.colors)
         rcParams.update(self.figure)
         
-    def run(self, save_path, main_path, subclasse, chart_name):
+    def run(self, save_path, main_path, subclasse, chart_name, version):
         self.save_path = save_path
         self.main_path = main_path
         self.subclasse = subclasse
+        self.version = version
         self.chart_name = chart_name
         self.__config__()
         self.__read__()
@@ -66,7 +86,7 @@ class Matplotin:
    
     
     def __read__(self):               
-        paths = glob.glob(f"{self.main_path}\\*.{self.file_type}")
+        paths = glob(f"{self.main_path}\\*.{self.file_type}")
         self.df = pd.DataFrame(columns=self.columns)    
         for f in paths:
             filename = f.split("\\")[-1].split(".")[0]
@@ -139,7 +159,7 @@ class Matplotin:
         
     def __save__(self):
         self.fig.tight_layout()
-        self.fig.savefig(f"{self.save_path}\\{self.subclasse}_{self.chart_name}.png", dpi=300)
+        self.fig.savefig(f"{self.save_path}\\{self.subclasse}_{self.chart_name}_{self.version}.png", dpi=300)
         self.df.to_excel(f"{self.main_path}\\{self.subclasse}_{self.chart_name}.xlsx", index=True)
         plt.close()
-        print(f">> Análise: {self.subclasse} | Gráfico: {self.chart_name} - OK")
+        print(f">> Gráfico: {self.chart_name} - OK")
