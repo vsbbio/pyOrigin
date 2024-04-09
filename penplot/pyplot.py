@@ -2,6 +2,7 @@
 
 from matplotlib import rcParams, cycler
 from configparser import ConfigParser
+from scipy import signal
 from glob import glob
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -83,6 +84,10 @@ class Matplotin:
         self.y_min= int(cp["Y_MIN"])
         self.y_per= int(cp["Y_PER"])
         self.y_offset= True if cp["Y_OFFSET"] == "True" else False
+        self.y_smooth = True if cp["Y_SMOOTH"] == "True" else False
+        self.y_smooth_window_lenght = cp["Y_SMOOTH_WINDOW_LENGHT"]
+        self.y_smooth_polyorder = cp["Y_SMOOTH_POLYORDER"]
+        self.y_smooth_mode = cp["Y_SMOOTH_MODE"]
    
     
     def __read__(self):               
@@ -133,6 +138,13 @@ class Matplotin:
             
             df[f"Offset {self.columns[self.y_col]}"] = df_t[f"Offset {self.columns[self.y_col]}"]
         
+        if self.y_smooth:
+            self.y_col = signal.savgol_filter(self.y_col, 
+                                              window_length=self.y_smooth_window_lenght,
+                                              polyorder=self.y_smooth_polyorder,
+                                              mode=self.y_smooth_mode
+                                              )
+            
         gby = df.groupby(self.columns[0])    
         gby.plot(
             title=f"{self.subclasse}_{self.chart_name}",
